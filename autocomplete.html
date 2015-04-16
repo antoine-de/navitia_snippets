@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="description" content="un exemple d'autocomplétion avec navitia">
+    <meta name="author" content="nlehuby">
+    <title>Autocomplete snippet</title>
+
+    <link href="http://code.jquery.com/ui/1.11.3/themes/trontastic/jquery-ui.css" rel="stylesheet" type="text/css">
+
+  </head>
+
+  <body>
+    <div id="container">
+        <label for="autocomplete_stoparea">Rechercher un arrêt : </label>
+        <input id="autocomplete_stoparea" type="text">      <input id="autocomplete_stoparea_id" type="hidden"> 
+    </div>
+            
+    <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="http://code.jquery.com/ui/1.11.3/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="params.js"></script>
+    <script type="text/javascript">    
+        $(document).ready(function(){
+
+            $.ajaxSetup( {
+            beforeSend: function(xhr) { xhr.setRequestHeader("Authorization", "Basic " + btoa(navitia_api_key + ":" )); }
+            });
+            
+           $("#autocomplete_stoparea").autocomplete({
+                 source: function( request, response) {
+                 $.ajax({
+                    url: navitia_url + '/v1/coverage/' + navitia_coverage+"/places?type[]=stop_area",
+                    dataType: "json",
+                    data: {
+                    q: request.term
+                    },
+                    success: function( data ) {
+                       ListData = [];
+                       for (var i = 0; i < data['places'].length; i++) {
+                          ListData.push({"id": data['places'][i]['id'], "value": data['places'][i]['name']})
+                          }
+                       response(ListData);
+                       }
+                    });
+                 },
+                 minLength: 3,
+                 select: function(event, ui){
+                          document.getElementById("autocomplete_stoparea_id").value = ui.item.id; 
+                          alert("Pour votre information, le code de cet arrêt est : " + ui.item.id );
+                          }
+           });
+        });
+   </script>    
+  </body>
+
