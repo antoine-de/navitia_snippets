@@ -29,7 +29,7 @@
            $("#autocomplete_stoparea").autocomplete({
                  source: function( request, response) {
                  $.ajax({
-                    url: navitia_url + '/v1/coverage/' + navitia_coverage+"/places?type[]=stop_area",
+                    url: navitia_url + '/v1/places?toto=tata',
                     dataType: "json",
                     data: {
                     q: request.term
